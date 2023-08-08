@@ -6,38 +6,54 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-@CrossOrigin
-public class RegisterApi {
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-	public ResponseEntity<?> registerCustomer(Customer newCustomer, UriComponentsBuilder uri) {
+@CrossOrigin
+@RestController
+@RequestMapping("/account/register")
+public class RegisterApi {
+	
+	JWTUtil jwtUtil = new JWTHelper();
+
+	@PostMapping
+	public ResponseEntity<?> registerCustomer(@RequestBody Customer newCustomer, UriComponentsBuilder uri) throws JsonProcessingException {
 		if (newCustomer.getEmail() == null) {
 			return ResponseEntity.badRequest().build();
 		}	
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-				.buildAndExpand(newCustomer.getId()).toUri();
-		ResponseEntity<?> response = ResponseEntity.created(location).build();
+		
+		ObjectMapper mapper = new ObjectMapper();
+		String json = mapper.writeValueAsString(newCustomer);
+		Token token = postNewCustomerToCustomerAPI(json);
+		
+		ResponseEntity<?> response = ResponseEntity.ok(token);
+		
 		return response;
 	}
 
-	private void postNewCustomerToCustomerAPI(String json_string) {
+	private Token postNewCustomerToCustomerAPI(String json_string) {
 		try {
 
-			URL url = new URL("http://localhost:8080/api/customers");
+			URL url = new URL("http://localhost:9001/gateway/customers");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setDoOutput(true);
 			conn.setRequestMethod("POST");
 			conn.setRequestProperty("Content-Type", "application/json");
-	  		//Token token = TokenAPI.getAppUserToken();
+	  		
+			Token token = jwtUtil.createToken();
+			token.setToken("Bearer " + token.getToken());
 	  		//conn.setRequestProperty("authorization", "Bearer " + token.getToken());
-	  		// conn.setRequestProperty("tokencheck", "false");
+	  		//conn.setRequestProperty("tokencheck", "false");
 
 			OutputStream os = conn.getOutputStream();
 			os.write(json_string.getBytes());
@@ -56,14 +72,18 @@ public class RegisterApi {
 			}
 
 			conn.disconnect();
+			
+			return token;
 
 		} catch (MalformedURLException e) {
 
 			e.printStackTrace();
+			return null;
 
 		} catch (IOException e) {
 
 			e.printStackTrace();
+			return null;
 
 		}
 
