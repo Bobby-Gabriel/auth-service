@@ -31,7 +31,7 @@ public class LoginApi {
 		if (c != null && c.getPassword().equals(password)) {
 	
 		    Token token = jwtUtil.createToken();
-		    token.setToken("Bearer " + token.getToken());
+		    token.setToken(token.getToken());
 			ResponseEntity<?> response = ResponseEntity.ok(token);
 			return response;
 		}
