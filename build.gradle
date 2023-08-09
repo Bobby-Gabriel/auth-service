@@ -20,8 +20,8 @@ description = "authentication service for team 4"
 mainClassName = "com.team4.project.AuthServiceSpringBootApp"
 
 
-sourceCompatibility = 11
-targetCompatibility = 11
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
 

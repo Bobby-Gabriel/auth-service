@@ -44,7 +44,7 @@ public class LoginApi {
 	private Customer getCustomerByNameFromCustomerAPI(String username) {
 		
 		RestTemplate rt = new RestTemplate();
-		Customer c = rt.getForObject("http://localhost:9001/gateway/customers/byname/" + username, Customer.class);
+		Customer c = rt.getForObject("http://customer:9001/gateway/customers/byname/" + username, Customer.class);
 		
 		return c;
 	}  	
