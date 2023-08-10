@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.springframework.http.ResponseEntity;
@@ -35,10 +34,8 @@ public class RegisterApi {
 		ObjectMapper mapper = new ObjectMapper();
 		String json = mapper.writeValueAsString(newCustomer);
 		Token token = postNewCustomerToCustomerAPI(json);
-		
-		ResponseEntity<?> response = ResponseEntity.ok(token);
-		
-		return response;
+
+		return ResponseEntity.ok(token);
 	}
 
 	private Token postNewCustomerToCustomerAPI(String json_string) {
@@ -52,8 +49,6 @@ public class RegisterApi {
 	  		
 			Token token = jwtUtil.createToken();
 			token.setToken("Bearer " + token.getToken());
-	  		//conn.setRequestProperty("authorization", "Bearer " + token.getToken());
-	  		//conn.setRequestProperty("tokencheck", "false");
 
 			OutputStream os = conn.getOutputStream();
 			os.write(json_string.getBytes());
@@ -74,11 +69,6 @@ public class RegisterApi {
 			conn.disconnect();
 			
 			return token;
-
-		} catch (MalformedURLException e) {
-
-			e.printStackTrace();
-			return null;
 
 		} catch (IOException e) {
 

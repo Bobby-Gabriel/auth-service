@@ -1,8 +1,5 @@
 package com.team4.project;
 
-import java.util.Date;
-import java.util.Optional;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -32,11 +29,10 @@ public class LoginApi {
 	
 		    Token token = jwtUtil.createToken();
 		    token.setToken(token.getToken());
-			ResponseEntity<?> response = ResponseEntity.ok(token);
-			return response;
+			return ResponseEntity.ok(token);
 		}
 		// bad request
-		return (ResponseEntity<?>) ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		
 	}
 	
@@ -44,9 +40,8 @@ public class LoginApi {
 	private Customer getCustomerByNameFromCustomerAPI(String username) {
 		
 		RestTemplate rt = new RestTemplate();
-		Customer c = rt.getForObject("http://customer:9001/gateway/customers/byname/" + username, Customer.class);
-		
-		return c;
+
+		return rt.getForObject("http://customer:9001/gateway/customers/byname/" + username, Customer.class);
 	}  	
 
 }    
