@@ -41,7 +41,7 @@ public class LoginApi {
 		
 		RestTemplate rt = new RestTemplate();
 
-		return rt.getForObject("http://customer:9001/gateway/customers/byname/" + username, Customer.class);
+		return rt.getForObject("http://18.188.12.86:9001/gateway/customers/byname/" + username, Customer.class);
 	}  	
 
 }    
